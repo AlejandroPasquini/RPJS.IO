@@ -13,10 +13,13 @@ var users = require('./routes/users');
 
 var app = express();
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -31,6 +34,27 @@ app.use('/bower_components',express.static(path.join(__dirname, 'bower_component
 
 app.use('/', routes);
 app.use('/users', users);
+
+/*
+app.use('/', function(req,res,next){
+ var sess = req.session;
+ console.log(sess);
+  if (sess.views) {
+    sess.views++;
+    res.setHeader('Content-Type', 'text/html');
+    res.write('<p>views: ' + sess.views + '</p>');
+    res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>');
+    res.end();
+  } else {
+    sess.views = 1;
+    res.end('welcome to the session demo. refresh!');
+  }
+
+
+
+});
+*/
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,6 +86,8 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
+
 
 
 module.exports = app;

@@ -51,7 +51,6 @@
 
    socketChat.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg['username']+' : '+msg['msg']));
-    
 
     if ($('#messages > li' ).length > 10) {
     $('#messages li:first-child').remove();

@@ -1,5 +1,4 @@
 'use strict';
-module.exports = function (io) { 
 
 var chatMongo= require('../models/chats')();
 
@@ -9,32 +8,54 @@ var incomingChat = new chatMongo({ username: username,msg:msg, });
 }
 
 
-var num=0 ;//for testing
+/*chatMongo.find({},{},{limit:6, sort:{date:-1 }}, function(err,chats){
+	if(err){
+		console.log(err);
+	}
+	else
+		console.log(chats)
+});
+*/
+
+module.exports = function (io) { 
+
+var userCount=0;
+var users= new Object();
 var chat = io
 .of('/chat')
 .on('connection', function(socket){
+     // On conection
       var address = socket.handshake.address;
+	  userCount=userCount+1;
+	  var username=null;
+	  console.log(address+': '+socket.id+' Contectado');
+	  console.log(userCount+' Usuarios conectados');
 
-	// Asing username Space testing
-	  num=num+1;
-	  var username='User ';
-	  console.log(address+': '+username+num+' Contectado');
-
-	 //login
+	 // On socket login
 	 socket.on('login',function(name){
-	 console.log(username+num+' como '+name);
+	 console.log(socket.id+' como '+name);
 	 username=name;
+
+	 users[socket.id]=username;
+	 console.log(users);
+	 
 	 });
 
 
 	socket.on('disconnect', function(){
-    console.log(username+' Desconectado');
+	userCount=userCount-1;
+	 delete users[socket.id];
+	 console.log(username+' Desconectado');
+	 console.log(userCount+' Usuarios conectados');
+	 console.log(users);
   });
 
 
 
+
+
   socket.on('chat message', function(msg){
-  	if(username!=='User '){
+  	if(username!==null){
   		chat.emit('chat message',{
   		msg:msg,
   		username:username
@@ -56,5 +77,7 @@ var chat = io
 });
 
 });
+
+
 };
 
