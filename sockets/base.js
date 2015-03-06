@@ -1,21 +1,7 @@
 'use strict';
-
-var chatMongo= require('../models/chats')();
-
-function databaseSave(username,msg){
-var incomingChat = new chatMongo({ username: username,msg:msg, });
- 	incomingChat.save();
-}
+var chatController=require('../controllers/chat.js')
 
 
-/*chatMongo.find({},{},{limit:6, sort:{date:-1 }}, function(err,chats){
-	if(err){
-		console.log(err);
-	}
-	else
-		console.log(chats)
-});
-*/
 
 module.exports = function (io) { 
 
@@ -61,7 +47,7 @@ var chat = io
   		username:username
   		});
         console.log(username+' Envio un mensaje el '+new Date());
-        databaseSave(username,msg);
+        chatController.databaseSave(username,msg);
 
 
   }

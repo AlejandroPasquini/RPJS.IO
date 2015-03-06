@@ -9,11 +9,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   //grunt.loadNpmTasks('grunt-node-inspector');
 
-
-
-
   grunt.registerTask('serve', ['shell:runServer']);
-
 
   grunt.initConfig({
     
