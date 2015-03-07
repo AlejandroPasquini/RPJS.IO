@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+  <% if (typeof username === 'undefined'){ %>
+  <form id='login'>
+  <p>Usuario: <input id='username'/> </p>
+  <p>Constraseña: <input id='password' type="password" /> </p>
+  <button>Log!</button>
+  </form>
+    <% } else {%>
+    <h2>Hi  <%= username %></h2>
+    <p>
+    <a href="/users/logout">Log Out</a>
+    </p>
+    <% } %>
+
+     <script src="../bower_components/jquery/dist/jquery.js"></script>
+
+      <script> 
+
+      $(document).ready(function() {
+        $('#login').submit(function(event) {
+        event.preventDefault();
+        $('#name').val();
+
+         $.post("/users/login",
+        {
+          name: $('#username').val(),
+          password: $('#password').val()
+        },
+        function(data,status){
+          //window.location.href="/users";
+          alert("Token: " + data.token + "\nStatus: " +status);
+          window.location.href="/users";
+        });
+
+        });
+      })
+     </script>
+  </body>
+</html>

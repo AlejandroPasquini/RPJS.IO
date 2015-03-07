@@ -1,9 +1,15 @@
 'use strict';
+//var express = require('express');
+//var session = require('express-session');
 var chatController=require('../controllers/chat.js')
+//var app= express();
 
 
 
 module.exports = function (io) { 
+
+
+
 
 var userCount=0;
 var users= new Object();
@@ -16,6 +22,7 @@ var chat = io
 	  var username=null;
 	  console.log(address+': '+socket.id+' Contectado');
 	  console.log(userCount+' Usuarios conectados');
+
 
 	 // On socket login
 	 socket.on('login',function(name){
