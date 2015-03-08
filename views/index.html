@@ -1,3 +1,7 @@
+{% extends 'layout/main.html' %}
+
+{% block content %}
+
 <div id='viewMain'>
   <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,10 +21,7 @@
     <ul id="messages"></ul>
     <form id="messagesSubmit" action="">
       <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-
-
-    
+    </form>    
         <!-- bower:js -->
         <script src="../bower_components/jquery/dist/jquery.js"></script>
         <!-- endbower -->
@@ -29,7 +30,7 @@
     <script src="javascripts/socket.io/socket.io.js"></script>
 
 <script>
- var socketChat = io('http://<%= ip %>:<%= port %>/chat');
+ var socketChat = io('http://{{ip}}:{{port}}/chat');
 
  $('#login').submit(function(){
     socketChat.emit('login', $('#name').val());
@@ -57,10 +58,11 @@
 </script>
 
 <script>   
-	$('#messages').bind('DOMNodeInserted',function() {                
-   	$("html, body").animate({ scrollTop: $(document).height()-$(window).height() });
+  $('#messages').bind('DOMNodeInserted',function() {                
+    $("html, body").animate({ scrollTop: $(document).height()-$(window).height() });
    });
-
-	</script>
+</script>
 
 </div>
+
+{% endblock %}

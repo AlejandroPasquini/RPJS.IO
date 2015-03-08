@@ -15,7 +15,7 @@ module.exports = function (grunt) {
     
     wiredep: {
       app: {
-        src: 'views/index.ejs'
+        src: 'views/layout/main.html'
       }
     },
     jshint: {
