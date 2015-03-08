@@ -1,8 +1,6 @@
 'use strict';
-//var express = require('express');
-//var session = require('express-session');
+
 var chatController=require('../controllers/chat.js')
-//var app= express();
 
 
 

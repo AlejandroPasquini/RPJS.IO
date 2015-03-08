@@ -22,13 +22,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: 'ssshhh32323hh',  resave: true,
     saveUninitialized: false}));
 
 // Use for dev testing will remove in final release.
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',express.static(path.join(__dirname, 'bower_components')));
 
+// Routes
 app.use('/', routes);
 app.use('/users', users);
 
