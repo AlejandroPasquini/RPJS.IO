@@ -5,11 +5,21 @@ var incomingChat = new chat({ username: username,msg:msg, });
  	incomingChat.save();
 };
 
-/*chatMongo.find({},{},{limit:6, sort:{date:-1 }}, function(err,chats){
-	if(err){
-		console.log(err);
-	}
-	else
-		console.log(chats)
+//Admin Function --- in dev ---
+exports.chatFindOne = function (){
+
+	chat.findOne({ username: 'nombre' },'username msg' ,function (err, chat) {
+	  if (err) return handleError(err);
+	  console.log('%s %s.', chat.username, chat.msg) 
+	})
+}
+
+exports.chatShow= function (){
+
+	chat.find({},{},{limit:10}, function (err, chats){
+	  if (err) return handleError(err);
+
+		console.log(chats);
 });
-*/
+	
+}
