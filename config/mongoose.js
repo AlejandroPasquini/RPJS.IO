@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 module.exports= function() {
 
-var db =mongoose.connect('mongodb://localhost/prueba5'); 
+var db =mongoose.createConnection('localhost','prueba5'); 
 
 
 return db;

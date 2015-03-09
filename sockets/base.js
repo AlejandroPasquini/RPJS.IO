@@ -1,6 +1,7 @@
-'use strict';
-var chatController=require('../controllers/chat.js')
+'use strict'
 
+var chatController=require('../controllers/chat.js');
+//var userController=require('../controllers/user.js');
 
 
 module.exports = function (io) { 

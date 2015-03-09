@@ -1,3 +1,5 @@
+'use strict';
+
 // chat controller for chat model require by sockets
 var chat= require('../models/chats')();
 exports.databaseSave = function (username,msg){
@@ -21,5 +23,5 @@ exports.chatShow= function (){
 
 		console.log(chats);
 });
-	
+
 }

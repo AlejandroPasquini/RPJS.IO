@@ -1,5 +1,6 @@
 'use strict'
-var mongoose= require('../config/mongoose')();
+var mongoose = require('mongoose');
+var db= require('../config/mongoose')();
 
 module.exports = function (){
 var Schema = mongoose.Schema;
@@ -11,6 +12,6 @@ var userSchema = new Schema({
 
  }, {/*opt*/});
 
- return mongoose.model('User', userSchema);
+ return  db.model('User', userSchema);
 
 }

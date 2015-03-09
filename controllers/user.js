@@ -1,7 +1,8 @@
-var user= require('../models/users')();
+
+var user= require('../models/users');
 
 exports.tokenValidate =function(){
-user.FindOne()	
+user.FindOne({},'');	
 } 
 
 exports.userSave= function(){
