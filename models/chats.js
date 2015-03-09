@@ -1,9 +1,8 @@
 'use strict'
-var mongoose = require('mongoose');
 var db= require('../config/mongoose')();
 
 module.exports = function (){
-var Schema = mongoose.Schema;
+var Schema = db.mongoose.Schema;
 var chatSchema = new Schema({ 
 	username: String, 
 	msg: String,
@@ -11,6 +10,6 @@ var chatSchema = new Schema({
 
  }, {/*opt*/});
 
- return db.model('Chat', chatSchema);
+ return db.connection.model('Chat', chatSchema);
 
 }
