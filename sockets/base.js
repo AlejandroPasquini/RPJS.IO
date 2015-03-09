@@ -1,12 +1,9 @@
 'use strict';
-
 var chatController=require('../controllers/chat.js')
 
 
 
 module.exports = function (io) { 
-
-
 
 
 var userCount=0;
@@ -53,7 +50,7 @@ var chat = io
   		});
         console.log(username+' Envio un mensaje el '+new Date());
         chatController.databaseSave(username,msg);
-
+       // chatController.chatShow();
 
   }
   else {

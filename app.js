@@ -7,6 +7,7 @@ var swig = require('swig')
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session=require('express-session');
+var jwt = require('express-jwt');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -35,6 +36,9 @@ app.use('/bower_components',express.static(path.join(__dirname, 'bower_component
 // Routes
 app.use('/', routes);
 app.use('/users', users);
+
+// Json Web Socket
+app.use(jwt({ secret: 'omg'}));
 
 
 // catch 404 and forward to error handler
