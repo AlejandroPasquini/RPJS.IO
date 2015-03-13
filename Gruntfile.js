@@ -13,8 +13,8 @@ module.exports = function (grunt) {
   //grunt.loadNpmTasks('grunt-node-inspector');
   
   grunt.registerTask('default', ['wiredep', 'jshint']);
-  grunt.registerTask('serve', ['shell:runServer']);
-  grunt.registerTask('serve2', ['watch']);
+  grunt.registerTask('server', ['shell:runServer']);
+  grunt.registerTask('serve', ['concurrent']);
 
   grunt.initConfig({
     
