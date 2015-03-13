@@ -2,17 +2,18 @@
 
 // chat controller for chat model require by sockets
 var chat= require('../models/chats')();
-exports.databaseSave = function (username,msg){
-var incomingChat = new chat({ username: username,msg:msg, });
+exports.databaseSave = function (from,msg,to){
+var incomingChat = new chat({ from: from,msg:msg });
+	if(to) incomingChat.to=to;
  	incomingChat.save();
 };
 
 //Admin Function --- in dev ---
 exports.chatFindOne = function (){
 
-	chat.findOne({ username: 'nombre' },'username msg' ,function (err, chat) {
+	chat.findOne({ from: 'nombre' },'from msg' ,function (err, chat) {
 	  if (err) return handleError(err);
-	  console.log('%s %s.', chat.username, chat.msg) 
+	  console.log('%s %s.', chat.from, chat.msg) 
 	})
 }
 

@@ -4,7 +4,8 @@ var db= require('../config/mongoose')();
 module.exports = function (){
 var Schema = db.mongoose.Schema;
 var chatSchema = new Schema({ 
-	username: String, 
+	from: String,
+	to: {type:String, default:'public'}, 
 	msg: String,
 	date: { type: Date, default: Date.now}
 
