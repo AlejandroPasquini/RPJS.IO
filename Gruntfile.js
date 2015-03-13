@@ -1,21 +1,26 @@
 'use strict';
+var db= require('./models/users')();
+var path= require('path');
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   grunt.loadNpmTasks('grunt-wiredep');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   //grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-concurrent');
   //grunt.loadNpmTasks('grunt-node-inspector');
-
+  
+  grunt.registerTask('default', ['wiredep', 'jshint']);
   grunt.registerTask('serve', ['shell:runServer']);
+  grunt.registerTask('serve2', ['watch']);
 
   grunt.initConfig({
     
     wiredep: {
       app: {
-        src: 'views/layout/main.html'
+        src: ['views/layout/main.html']
       }
     },
     jshint: {
@@ -32,8 +37,6 @@ module.exports = function (grunt) {
             command: 'DEBUG=chat-io:*  ./bin/www'
         }
     },
-
-
 
 concurrent: {
   dev: {
@@ -78,14 +81,20 @@ nodemon: {
   }
 },
 watch: {
+     options: {
+      livereload: true,
+      interval: 3000
+    },
   scripts: {
     files: ['**/*.js'],
-    tasks: ['jshint'],
-    options: {
-      spawn: false,
-      livereload: true,
-      interval: 5000
-    },
+    tasks: ['jshint']
+  },
+    css: {
+    files: './public/**/*.css'
+  },
+
+     html: {
+    files: './views/**/*.html'
   },
 },
 
@@ -106,6 +115,48 @@ watch: {
 
 
 });
+
+  grunt.registerTask('dbseed', 'seed the database', function() {
+    grunt.task.run('adduser:admin:admin@example.com:secret:true');
+    grunt.task.run('adduser:bob:bob@example.com:secret:false');
+  });
+
+  grunt.registerTask('adduser', 'add a user to the database', function(usr, emailaddress, pass, adm) {
+    // convert adm string to bool
+    adm = (adm === "true");
+
+    var user = new db({ username: usr
+            , email: emailaddress
+            , password: pass
+            , admin: adm });
+    
+    // save call is async, put grunt into async mode to work
+    var done = this.async();
+
+    user.save(function(err) {
+      if(err) {
+        console.log('Error: ' + err);
+        done(false);
+      } else {
+        console.log('saved user: ' + user.username);
+        done();
+      }
+    });
+  });
+
+  grunt.registerTask('dbdrop', 'drop the database', function() {
+
+var users =  db; 
+    var done = this.async();
+
+users.remove({},function(err,users){
+    done();
+
+})
+
+
+  });
+
 
 }
 
