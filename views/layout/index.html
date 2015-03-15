@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="Alejandro Pasquini" content="">
+            <!-- bower:css -->
+            <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.css" />
+            <!-- endbower -->
+           {% block css %}
+            {% endblock %}
+    <title>{{title}}</title>  
+    </head>
+  <body>
+
+  {% block content %}
+  {% endblock %}
+
+        <!-- bower:js -->
+        <script src="../../bower_components/jquery/dist/jquery.js"></script>
+        <script src="../../bower_components/jquery.cookie/jquery.cookie.js"></script>
+        <script src="../../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+        <!-- endbower -->
+
+    <script src="//localhost:35729/livereload.js"></script>
+    <script src="javascripts/socket.io/socket.io.js"></script>
+
+  {% block js %}
+  {% endblock %}
+
+  </body>
+</html>
