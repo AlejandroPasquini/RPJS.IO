@@ -1,6 +1,6 @@
 {
-  "name": "chat",
-  "version": "0.1.1",
+  "name": "chat-io",
+  "version": "0.1.5",
   "main": [
     "./sockets/base.js",
     "./views/index.ejs"
