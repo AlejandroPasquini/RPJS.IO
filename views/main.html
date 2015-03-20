@@ -36,17 +36,17 @@
 <div id='viewMain'>
 
     <div id="messages"></div>
- 
-
-
-   
 
     <footer class="footer">
     <div class="container-fluid">
     <form id="messagesSubmit"  action="">
     <div class="row"> 
-    <input id="m" autocomplete="off" class="col-md-6 col-xs-8" type="text" maxlength="250" required/> <button class="btn btn-primary col-md-3 col-xs-3" id="send">  <span>Send >> </span></button>
+    <input id="m" autocomplete="off" class="col-md-8 col-xs-7" type="text" maxlength="250" required/>
+    <button type="button" class="btn btn-primary col-md-1 col-xs-1" id="button-image"><span class="glyphicon glyphicon-circle-arrow-up" ></span>
+    </button>
+    <button class="btn btn-primary col-md-2 col-xs-2" id="send">  <span class="glyphicon glyphicon-send"></span></button>
     </div>
+    <input id="inputImage" type="file"  /> 
     </form>
     </div>
     </footer>
@@ -66,35 +66,60 @@ $('#messages').css({
 
 
 $(window).on('resize', function(){
-
 $('#messages').css({
   height: $(window).height()-105
 });
 
 
 });
+//
+$.dataImage=false;
+
+function readImage(input) {
+
+    if ( input.files && input.files[0] ) {
+        var reader= new FileReader();
+        reader.onload = function(e) {
+             $('#img').attr( "src", e.target.result );
+             $.dataImage = e.target.result
+        };       
+        reader.readAsDataURL( input.files[0] );
+    }
+}
+
+$('#button-image').click(function() {
+$( "#inputImage" ).click()
+});
+
+$("#inputImage").change(function(){
+    readImage( this );
+});
+//
 
 
-});   
-
-      </script>
-
-      <script>
  var socketChat = io('http://{{ip}}:{{port}}/chat');
 
- $('#login').submit(function(){
+
+ $('#login').submit(function(event){
     socketChat.emit('login', $('#name').val());
     $( "#username" ).text($('#name').val())
     $('#login').hide(1000)
-    return false;
+    event.preventDefault();
+
   });
 
 
+    $('#messagesSubmit').submit(function(event){
+    if ($.dataImage!==false) {
+          var tempImage = $.dataImage
+    }
 
-    $('#messagesSubmit').submit(function(){
-    socketChat.emit('chat message', $('#m').val());
+    socketChat.emit('chat message',  {body:$('#m').val(), image:tempImage} );
     $('#m').val('');
-    return false;
+    $("#inputImage").val('');
+    $.dataImage=false;
+    event.preventDefault();
+
   });
 
    
@@ -112,6 +137,9 @@ $('#messages').css({
      color = '#FF4652';
      }
 
+     if( typeof msg['image'] !== 'undefined' ) {
+    $('#messages').append('<img class="img-responsive msg-image center-block" src="'+msg['image']+'">');
+  }
     $('#messages').append($('<p style="color:'+color+'">').text(msg['username']+' : '+msg['msg']));
  
     if (scollDown===true) {
@@ -128,5 +156,15 @@ $('#messages').css({
 
   });
 
-</script>
+
+
+
+
+
+
+
+});   
+
+
+      </script>
   {% endblock %}

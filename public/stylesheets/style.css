@@ -23,6 +23,22 @@ body{
 #messagesSubmit {
 
 }
+#button-image{
+    margin-top:5px;
+	margin-left: 5px;
+	height: 40px;
+	font-size: 20px;
+	margin-bottom: 10px
+}
+
+#inputImage{
+	display: none;
+}
+
+.msg-image{
+	height: 300px;
+ 
+}
 
 #m{
 	margin-top:5px;
@@ -31,12 +47,13 @@ body{
 	font-size: 20px;
 }
 
+
+
 #send{
 	margin-top:5px;
 	margin-left: 5px;
 	height: 40px;
 	font-size: 20px;
 	margin-bottom: 10px
-
 
 }

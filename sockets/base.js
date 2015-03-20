@@ -71,12 +71,20 @@ var chat = io
 
   socket.on('chat message', function(msg){
   	if( typeof socket.username !== 'undefined'){
+  		var image = {};
+  		if  (typeof msg.image !=='undefined'){
+  		var tempArray= msg.image.split(',',2);
+  		image.type =tempArray[0].toString();
+  		image.binary=tempArray[1].toString();
+  		image.toSend= image.type+','+image.binary
+  	}
   		chat.emit('chat message',{
-  		msg:msg,
+  		msg:msg.body,
+  		image: image.toSend,
   		username:socket.username
   		});
         console.log(socket.username+' Envio un mensaje el '+new Date());
-        chatController.databaseSave(socket.username,msg);
+        chatController.databaseSave(socket.username,msg.text);
        // chatController.chatShow();
 
   }
@@ -90,14 +98,11 @@ var chat = io
 
 }
 
+});
 
-  socket.on('private message', function (from,to,msg) {
+ socket.on('private message', function (from,to,msg) {
     console.log('mensaje privado');
   });
-
-
-
-});
 
 });
 

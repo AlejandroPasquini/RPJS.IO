@@ -11,7 +11,6 @@ var passport=require('passport');
 var jwt = require('express-jwt');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
 var app = express();
 
 // view engine setup
