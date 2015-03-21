@@ -58,6 +58,8 @@
 
   {% block js %}
       <script>
+ var socketChat = io('http://{{ip}}:{{port}}/chat');
+
 $(document).ready(function() {
 
 $('#messages').css({
@@ -80,8 +82,16 @@ function readImage(input) {
     if ( input.files && input.files[0] ) {
         var reader= new FileReader();
         reader.onload = function(e) {
-             $('#img').attr( "src", e.target.result );
-             $.dataImage = e.target.result
+           var tempArray = [];
+           tempArray = e.target.result.split(',',2);
+           tempArray[2] = tempArray[1].length;
+           socketChat.emit('file validate', {type:tempArray[0], dataBase64Key:tempArray[1].substr(tempArray[2]-6,tempArray[2]),
+                                            length:tempArray[2]});
+           $.dataImage = e.target.result;
+
+
+
+             console.log(tempArray);
         };       
         reader.readAsDataURL( input.files[0] );
     }
@@ -95,10 +105,6 @@ $("#inputImage").change(function(){
     readImage( this );
 });
 //
-
-
- var socketChat = io('http://{{ip}}:{{port}}/chat');
-
 
  $('#login').submit(function(event){
     socketChat.emit('login', $('#name').val());

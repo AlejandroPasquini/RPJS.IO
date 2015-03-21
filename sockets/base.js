@@ -6,23 +6,24 @@ var chatController=require('../controllers/chat.js');
 //var userController=require('../controllers/user.js');
 module.exports = function (io) { 
 
-
-var userCount=0;
 var users= {};
+var userCount=0;
+var fileValidTypes = /(image|audio)/;
 var chat = io
 .of('/chat')
 // Socket Auth
 .use(function (socket,next){
 	 var auth = cookie.parse(socket.handshake.headers.cookie);
+	 var decoded = false
 	 try {
-	  var decoded = jwt.verify(auth.token, 'omg');
+	   decoded = jwt.verify(auth.token, 'omg');
 	 } catch(err) {
 	  console.log('Token invalido');
 	  //userCount=userCount-1;
 	  //socket.disconnect();
 	 }
 	 finally {	
-	 	if(decoded){
+	 	if(decoded !==false){
 	 	console.log('Token Valido')	
 	 	}
 	 	else
@@ -69,18 +70,34 @@ var chat = io
 	 }
   });
 
+// socket data received balidate validate
+	socket.on('file validate', function(file){
+		socket.fileValidate = {};
+		socket.fileValidate.type = file.type;
+		socket.fileValidate.dataBase64Key= file.dataBase64Key;
+		socket.fileValidate.length = file.length;
+		console.log(file);
+	});
+
+
   socket.on('chat message', function(msg){
   	if( typeof socket.username !== 'undefined'){
-  		var image = {};
   		if  (typeof msg.image !=='undefined'){
-  		var tempArray= msg.image.split(',',2);
-  		image.type =tempArray[0].toString();
-  		image.binary=tempArray[1].toString();
-  		image.toSend= image.type+','+image.binary
-  	}
+  			var fileApprove = false	
+  			if (msg.image.match(fileValidTypes)){
+  				if (msg.image.indexOf(socket.fileValidate.dataBase64Key) !== -1){
+  				 fileApprove = true	;
+  				}
+  			}
+  		}
+ 		if (fileApprove !== true){
+ 			delete msg.image;
+ 			// event socket in error file
+ 		}
+
   		chat.emit('chat message',{
   		msg:msg.body,
-  		image: image.toSend,
+  		image: msg.image,
   		username:socket.username
   		});
         console.log(socket.username+' Envio un mensaje el '+new Date());
