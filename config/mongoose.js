@@ -4,7 +4,7 @@ var config =require('./config');
 
 module.exports= function() {
 
-var connection =mongoose.createConnection(config.dbUrl,config.dbName,config.opt); 
+var connection =mongoose.createConnection(config.host,config.dbName,config.opt); 
 
 return {connection:connection, mongoose:mongoose};
 

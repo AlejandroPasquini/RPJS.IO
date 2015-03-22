@@ -5,18 +5,15 @@ var mongodb=
 {
 host: process.env.IP || process.env.OPENSHIFT_MONGODB_DB_HOST || '127.0.0.1',  
 port: process.env.PORT || process.env.OPENSHIFT_MONGODB_DB_PORT || '27017',
-dbUrl: process.env.OPENSHIFT_MONGODB_DB_HOST|| 'localhost',
-dbName:  process.env.MONGODB_DB_NAME || 'chatio'
-};
-
-
-mongodb.opt = {
+dbName:  process.env.MONGODB_DB_NAME || 'chatio',
+opt: {
   db: { native_parser: true },
   server: { poolSize: 5 },
   user: process.env.OPENSHIFT_MONGODB_DB_USERNAME || '',
   pass: process.env.OPENSHIFT_MONGODB_DB_PASSWORD ||''
-
 }
+};
+
 
 /*
 process.env.OPENSHIFT_MONGODB_DB_USERNAME
