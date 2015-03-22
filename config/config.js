@@ -5,7 +5,7 @@ var mongodb=
 {
 host: process.env.IP || process.env.OPENSHIFT_MONGODB_DB_HOST || '127.0.0.1',  
 port: process.env.PORT || process.env.OPENSHIFT_MONGODB_DB_PORT || '27017',
-dbUrl: process.env.OPENSHIFT_MONGODB_DB_HOST+':'+ process.env.OPENSHIFT_MONGODB_DB_PORT || 'localhost',
+dbUrl: process.env.OPENSHIFT_MONGODB_DB_HOST|| 'localhost',
 dbName:  process.env.MONGODB_DB_NAME || 'chatio'
 };
 
