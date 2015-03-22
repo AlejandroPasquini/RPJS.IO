@@ -13,13 +13,9 @@ router.get('/', pass.ensureAuthenticated, function(req, res, next) {
 
 router.get('/login', function(req, res, next) {
 		res.cookie('token', jwt.sign({'user':'test'}, 'omg' ,{ expiresInMinutes: 60*5 })) //for testing
+		//console.log('Decodificacion: '+jwt.decode(token).name);
 		res.render('sign-in', {});
  });
-
-
-
-
-
 
 
 router.post('/login', function(req,res,next){
@@ -27,12 +23,22 @@ user = req.session;
 user.name=req.body.name;
 user.password=req.body.password;
 
-var token = jwt.sign(user, 'omg' ,{ expiresInMinutes: 60*5 });
-
 res.json({token: token});
-console.log('Decodificacion: '+jwt.decode(token).name);
 
 });
+
+
+router.get('/sign-up', function(req,res,next){
+res.render('sign-up',{});
+});
+
+router.post('/sign-up', function(req,res,next){
+	
+});
+
+
+
+
 
 router.get('/logout',function(req,res){
 req.session.destroy(function(err){

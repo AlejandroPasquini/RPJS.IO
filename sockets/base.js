@@ -70,7 +70,7 @@ var chat = io
 	 }
   });
 
-// socket data received balidate validate
+// socket data received validate
 	socket.on('file validate', function(file){
 		socket.fileValidate = {};
 		socket.fileValidate.type = file.type;
@@ -92,7 +92,7 @@ var chat = io
   		}
  		if (fileApprove !== true){
  			delete msg.image;
- 			// event socket in error file
+ 			// event socket on error file
  		}
 
   		chat.emit('chat message',{
