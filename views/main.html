@@ -35,7 +35,9 @@
 
 <div id='viewMain'>
 
-    <div id="messages"></div>
+    <div id="messages">
+    
+    </div>
 
     <footer class="footer">
     <div class="container-fluid">
@@ -75,21 +77,17 @@ $('#messages').css({
 
 });
 //
-$.dataImage=false;
 
-function readImage(input) {
+function readImageForValidate(input) {
 
     if ( input.files && input.files[0] ) {
         var reader= new FileReader();
         reader.onload = function(e) {
            var tempArray = [];
            tempArray = e.target.result.split(',',2);
-           tempArray[2] = tempArray[1].length;
+           tempArray[2] =e.target.result.length;
            socketChat.emit('file validate', {type:tempArray[0], dataBase64Key:tempArray[1].substr(tempArray[2]-6,tempArray[2]),
                                             length:tempArray[2]});
-           $.dataImage = e.target.result;
-
-
 
              console.log(tempArray);
         };       
@@ -97,12 +95,27 @@ function readImage(input) {
     }
 }
 
+function sendImageForUpload(input) {
+    if ( input.files && input.files[0] ) {
+        var reader= new FileReader();
+        reader.onload = function(e) {
+        socketChat.emit('file upload', {file: e.target.result});
+        };       
+        reader.readAsDataURL( input.files[0] );
+    }
+}
+
+
 $('#button-image').click(function() {
 $( "#inputImage" ).click()
+
 });
 
 $("#inputImage").change(function(){
-    readImage( this );
+    readImageForValidate( this );
+
+  $('#button-image').removeClass('btn-primary').addClass('btn-warning').children().removeClass('glyphicon-circle-arrow-up').addClass(' glyphicon-refresh glyphicon-refresh-animate');
+
 });
 //
 
@@ -116,14 +129,12 @@ $("#inputImage").change(function(){
 
 
     $('#messagesSubmit').submit(function(event){
-    if ($.dataImage!==false) {
-          var tempImage = $.dataImage
-    }
 
-    socketChat.emit('chat message',  {body:$('#m').val(), image:tempImage} );
+
+    socketChat.emit('chat message',  {body:$('#m').val()} );
     $('#m').val('');
     $("#inputImage").val('');
-    $.dataImage=false;
+     $('#button-image').removeClass('btn-success').addClass('btn-primary').children().removeClass('glyphicon-ok').addClass('glyphicon glyphicon-circle-arrow-up'); 
     event.preventDefault();
 
   });
@@ -163,14 +174,25 @@ $("#inputImage").change(function(){
   });
 
 
+socketChat.on('file validate',function(validate){
+
+if (validate.next){  
+sendImageForUpload($("#inputImage")[0]);
+}
+
+else if(validate.uploadComplete) {
+
+  $('#button-image').removeClass('btn-warning').addClass('btn-success').children().removeClass('glyphicon-refresh glyphicon-refresh-animate').addClass('glyphicon-ok');
 
 
+}
+else {
+alert(validate.err);
+}
 
-
-
+});
 
 });   
-
 
       </script>
   {% endblock %}
