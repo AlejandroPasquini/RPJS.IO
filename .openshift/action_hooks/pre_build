@@ -2,7 +2,6 @@
 
 HOME=$HOME/app-root/runtime
 cd ~/repo
-npm install bower
-./node_modules/.bin/bower install
 npm cache clean
+npm install bower
 ./node_modules/.bin/bower cache clean
