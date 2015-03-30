@@ -15,10 +15,37 @@ body{
   background-color: #222222;
 }
 
-#messages{
+#messages-box{
 	overflow-y: scroll;
 	font-size: 20px;
 }
+
+
+.msgTest {
+background-color: #FFFFFF;
+margin-bottom: 15px;
+}
+
+
+.msg-header{
+
+}
+
+.profile-img{
+	height: 50px;
+	width: 50px;
+}
+
+.msg-username, .profile-img{
+	display: inline;
+	margin-left: 5px;
+	margin-top: 5px;
+}
+
+.msg-text {
+}
+
+
 
 #messagesSubmit {
 

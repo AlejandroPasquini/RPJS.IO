@@ -15,7 +15,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand navbar-center" href="#">Chat IO</a>
+          <a class="navbar-brand navbar-center" href="#">RPJS-IO</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse navbar-right">
           <ul class="nav navbar-nav">
@@ -35,7 +35,13 @@
 
 <div id='viewMain'>
 
-    <div id="messages">
+    <div id="messages-box">
+    <div class='msgTest'>
+    <div class='msg-header'>
+    <img src="http://placehold.it/350x150" alt="..." class="img-circle profile-img"/><div class="msg-username">Ale9Hack:</div>
+    </div> 
+    <div class='msg-text'>Bienvenido</div>
+    </div>
     
     </div>
 
@@ -59,140 +65,8 @@
 
 
   {% block js %}
-      <script>
+  <script type="text/javascript">
  var socketChat = io('http://{{ip}}:{{port}}/chat');
-
-$(document).ready(function() {
-
-$('#messages').css({
-  height: $(window).height()-105
-});
-
-
-$(window).on('resize', function(){
-$('#messages').css({
-  height: $(window).height()-105
-});
-
-
-});
-//
-
-function readImageForValidate(input) {
-
-    if ( input.files && input.files[0] ) {
-        var reader= new FileReader();
-        reader.onload = function(e) {
-           var tempArray = [];
-           tempArray = e.target.result.split(',',2);
-           tempArray[2] =e.target.result.length;
-           socketChat.emit('file validate', {type:tempArray[0], dataBase64Key:tempArray[1].substr(tempArray[2]-6,tempArray[2]),
-                                            length:tempArray[2]});
-
-             console.log(tempArray);
-        };       
-        reader.readAsDataURL( input.files[0] );
-    }
-}
-
-function sendImageForUpload(input) {
-    if ( input.files && input.files[0] ) {
-        var reader= new FileReader();
-        reader.onload = function(e) {
-        socketChat.emit('file upload', {file: e.target.result});
-        };       
-        reader.readAsDataURL( input.files[0] );
-    }
-}
-
-
-$('#button-image').click(function() {
-$( "#inputImage" ).click()
-
-});
-
-$("#inputImage").change(function(){
-    readImageForValidate( this );
-
-  $('#button-image').removeClass('btn-primary').addClass('btn-warning').children().removeClass('glyphicon-circle-arrow-up').addClass(' glyphicon-refresh glyphicon-refresh-animate');
-
-});
-//
-
- $('#login').submit(function(event){
-    socketChat.emit('login', $('#name').val());
-    $( "#username" ).text($('#name').val())
-    $('#login').hide(1000)
-    event.preventDefault();
-
-  });
-
-
-    $('#messagesSubmit').submit(function(event){
-
-
-    socketChat.emit('chat message',  {body:$('#m').val()} );
-    $('#m').val('');
-    $("#inputImage").val('');
-     $('#button-image').removeClass('btn-success').addClass('btn-primary').children().removeClass('glyphicon-ok').addClass('glyphicon glyphicon-circle-arrow-up'); 
-    event.preventDefault();
-
-  });
-
-   
-   socketChat.on('chat message', function(msg){
-         var scollDown;
-         if ($('#messages')[0].scrollHeight - $('#messages').scrollTop() <= $('#messages').height()+80  ) {      
-           scollDown=true;
-        }
-        else {
-            scollDown=false;
-        }
-
-     var color;
-     if ($('#name').val()===msg['username']) {
-     color = '#FF4652';
-     }
-
-     if( typeof msg['image'] !== 'undefined' ) {
-    $('#messages').append('<img class="img-responsive msg-image center-block" src="'+msg['image']+'">');
-  }
-    $('#messages').append($('<p style="color:'+color+'">').text(msg['username']+' : '+msg['msg']));
- 
-    if (scollDown===true) {
-       $("#messages").animate({ scrollTop: $('#messages')[0].scrollHeight},50);
-    };
-
-
-
- /*   if ($('#messages > p' ).length > 10) {
-    $('#messages p:first-child').remove();
-    }
-  */
-
-
-  });
-
-
-socketChat.on('file validate',function(validate){
-
-if (validate.next){  
-sendImageForUpload($("#inputImage")[0]);
-}
-
-else if(validate.uploadComplete) {
-
-  $('#button-image').removeClass('btn-warning').addClass('btn-success').children().removeClass('glyphicon-refresh glyphicon-refresh-animate').addClass('glyphicon-ok');
-
-
-}
-else {
-alert(validate.err);
-}
-
-});
-
-});   
-
-      </script>
+  </script>
+  <script type="text/javascript" src="/javascripts/main.js" ></script>
   {% endblock %}
