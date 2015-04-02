@@ -52,7 +52,7 @@ var chat = io
 	 if (!users[name]){
 		 users[name]= {socket:socket};
 		 console.log(socket.id+' como '+name);
-		 socket.emit('login finish',{});
+		 socket.emit('login finish',{username:name});
 		 chat.emit('users public connects',name);
 	 }
 

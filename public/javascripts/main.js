@@ -1,6 +1,18 @@
 //Globals var
-var usersInPublic = {}
+function usersTemplate() {
+  this.mainUserIsSet=1
+  this.list={}
+  this.assignName= function(name,current){   
+    this.list[name]={};
+    if (current===0){this.mainUserIsSet=0}
+    this.list[name].config={};
+    this.list[name].config.style={}; 
+  }
+}
 
+var usersInPublic = new usersTemplate()
+
+var mainUser ='';
 $(document).ready(function() {
 
 $('#messages-box').css({
@@ -52,13 +64,17 @@ function sendImageForUpload(input) {
     }
 }
 
-function assignUserColor(){
-
+function assignUserColor(opt){
+  if(typeof opt === 'undefined'){var opt={}}
+  if (opt.mainUser){
+    return {'backgroundColor':'','color':''}
+  }
+  else {
   var color = [{'backgroundColor':'#FF0000','color':''},
         {'backgroundColor':'#34FF00','color':''},
-        {'backgroundColor':'','color':''}];
-  var count = _.size(usersInPublic);
-
+        {'backgroundColor':'#666666','color':''}];
+  var count = _.size(usersInPublic.list);
+  if (usersInPublic.mainUserIsSet===0){count-=1}
     if (count > color.length) {
       var countBGCtemp=0;
       for (var i =0 ; i <  count; i++,countBGCtemp++) {
@@ -76,6 +92,8 @@ function assignUserColor(){
      return {backgroundColor:color[count-1].backgroundColor};
     }
   }
+}
+
 
 
 
@@ -137,7 +155,7 @@ $("#inputImage").change(function(){
       'margin-left': getMarginMsgHeader()+10
     });
     $('.msgTest:last').css({
-      'background-color': usersInPublic[msg['username']].backgroundColor
+      'background-color': usersInPublic.list[msg['username']].config.style.backgroundColor
     });
  
     if (scollDown===true) {
@@ -151,8 +169,8 @@ socketChat.on('connection successful',function(obj){
 
 for (var i=0;obj.usersOnLine.length>i;i++){
 
-usersInPublic[obj.usersOnLine[i]] = {}
-usersInPublic[obj.usersOnLine[i]]=assignUserColor();
+usersInPublic.assignName(obj.usersOnLine[i]);
+usersInPublic.list[obj.usersOnLine[i]].config.style=assignUserColor();
 
 } 
 
@@ -160,14 +178,16 @@ usersInPublic[obj.usersOnLine[i]]=assignUserColor();
 
 socketChat.on('login finish', function(obj){
 
-
+mainUser = obj.username
+usersInPublic.assignName(mainUser,0);
+usersInPublic.list[mainUser].config.style =assignUserColor({mainUser:mainUser});
 
 });
 
 socketChat.on('users public connects',function(name){
-  if (typeof usersInPublic[name] !== 'undefined') { 
-    usersInPublic[name] = {}
-    usersInPublic[name] = assignUserColor();
+    if (typeof usersInPublic.list[name]==='undefined'){
+    usersInPublic.assignName(name);
+    usersInPublic.list[name].config.style = assignUserColor(); 
   }
 });
 
