@@ -1,5 +1,5 @@
 'use strict'
-var db= require('../config/mongoose')();
+var db= require('../../config/mongoose')();
 
 module.exports = function (){
 var Schema = db.mongoose.Schema;

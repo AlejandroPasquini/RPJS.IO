@@ -1,16 +1,6 @@
 var passport = require('passport');
-/*
-var user= require('../models/users');
+var jwt = require('jsonwebtoken');
 
-exports.tokenValidate =function(){
-user.FindOne({},'');	
-} 
-
-exports.userSave= function(){
-	var user =new user({});
-	user.save();
-}
-*/
 exports.account = function(req, res) {
   res.render('account', { user: req.user });
 };
@@ -47,11 +37,14 @@ exports.postlogin = function(req, res, next) {
     if (err) { return next(err) }
     if (!user) {
       req.session.messages =  [info.message];
-      return res.redirect('/login')
+      return res.redirect('/users/login');
     }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
-      return res.redirect('/');
+      // falta un desarrolo de serguridad
+      tokenGenerate(req,res);
+
+      return res.redirect('/users');
     });
   })(req, res, next);
 };

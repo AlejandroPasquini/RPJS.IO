@@ -4,14 +4,14 @@
     <title></title>
   </head>
   <body>
-  {% if !username  %}
+  {% if !user  %}
   <form id='login'>
   <p>Usuario: <input id='username'/> </p>
   <p>Constraseña: <input id='password' type="password" /> </p>
   <button>Log!</button>
   </form>
     {%  else  %}
-    <h2>Hi   {{username}} </h2>
+    <h2>Hi   {{user.username}} </h2>
     <p>
     <a href="/users/logout">Log Out</a>
     </p>
@@ -20,7 +20,7 @@
      <script src="../bower_components/jquery/dist/jquery.js"></script>
 
       <script> 
-
+/*
       $(document).ready(function() {
         $('#login').submit(function(event) {
         event.preventDefault();
@@ -38,6 +38,7 @@
 
         });
       })
+*/
      </script>
   </body>
 </html>

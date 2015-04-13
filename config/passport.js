@@ -1,6 +1,6 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/users');
+var User = require('../models/users')();
 var authStrategy;
 
 passport.serializeUser(function(user, done) {
@@ -31,7 +31,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
 // Simple route middleware to ensure user is authenticated.  Otherwise send to login page.
 exports.ensureAuthenticated = function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('users/login')
+  res.redirect('/users/login')
 }
 
 

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 // this is a base64 file validate system for socket io and the chat system.
 var fileValidTypes = /(image|audio)/;
 var fileSize = 1398117; //1MB
@@ -38,4 +38,23 @@ exports.upload=function (upload,validate){
 		}
 
 }
+var invalidNamesRegExp= /(alejandro*|pasquini*|ale9hack*|admin*|root*|localhost*)/
+var maxNamesLenght=30;
 
+exports.name= function(name){
+	if (name.length <= maxNamesLenght){
+		name = name.toLowerCase();
+		if(name.match(invalidNamesRegExp)){
+
+			throw 'nombre invalido';	
+		}
+		else {
+			console.log('valido'); 
+			return 0;
+		}
+	}
+	else {
+		throw 'nombre demasiado largo'
+		}
+
+}

@@ -2,28 +2,25 @@ var express = require('express');
 var passport = require('passport');
 var pass = require('../config/passport')
 var router = express.Router();
-var jwt = require('jsonwebtoken');
-
+var userController = require('../controllers/user')
 var user;
 /* GET users listing. */
 router.get('/', pass.ensureAuthenticated, function(req, res, next) {
-	
-		res.render('user', {username:req.user});
+		res.render('user', {user:req.user});
  });
 
 router.get('/login', function(req, res, next) {
-		res.cookie('token', jwt.sign({'user':'test'}, 'omg' ,{ expiresInMinutes: 60*5 })) //for testing
-		//console.log('Decodificacion: '+jwt.decode(token).name);
+	//	console.log('Decodificacion: '+jwt.decode(token).user);
 		res.render('sign-in', {});
  });
 
 
 router.post('/login', function(req,res,next){
-user = req.session;
-user.name=req.body.name;
-user.password=req.body.password;
 
-res.json({token: token});
+userController.postlogin(req,res,next);
+
+
+//res.json({token: 'oken'});
 
 });
 
@@ -35,9 +32,6 @@ res.render('sign-up',{});
 router.post('/sign-up', function(req,res,next){
 	
 });
-
-
-
 
 
 router.get('/logout',function(req,res){

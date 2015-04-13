@@ -1,16 +1,26 @@
-'use strict'
+'use strict';
 
 var jwt = require('jsonwebtoken');
 var cookie= require('cookie');
-var chatController=require('../controllers/chat.js');
-var validate = require('./lib/validate.js')
-//var userController=require('../controllers/user.js');
-
+var chatController=require('./controllers/chat.js');
+var validate = require('./lib/validate.js');
+var userController=require('./controllers/user.js');
+function usersTemplateSystem(){
+/*jshint validthis: true */
+this.online={}
+this.assign = function (name,socket){
+this.online[name]={socket:socket}	
+}
+this.del = function (name){
+delete this.online[name];	
+}
+}
 
 module.exports = function (io) { 
 
-var users= {};
+var users= new usersTemplateSystem();
 var userCount=0;
+
 var chat = io
 .of('/chat')
 // Socket Auth
@@ -26,7 +36,10 @@ var chat = io
 	 }
 	 finally {	
 	 	if(decoded !==false){
-	 	console.log('Token Valido')	
+	 	console.log('Token Valido');
+	 	userController.tokenValidate(function(name){
+	 	console.log('El token es de '+name);
+	 	});	
 	 	}
 	 	else
 	 	{
@@ -43,14 +56,27 @@ var chat = io
       socket.StreamB64file = {};
 	  console.log(address+': '+socket.id+' Contectado');
 	  console.log(userCount+' Usuarios conectados');
-	  socket.emit('connection successful',{usersOnLine:Object.keys(users)})
+	  socket.emit('connection successful',{usersOnLine:Object.keys(users.online)})
 
 	 // On socket login
 	 socket.on('login',function(name){
-	 socket.username=name;
+	 try {
+	 	validate.name(name);
+	 }
+
+	 catch(err) {
+ 		console.log(err);
+	 	socket.emit('chat message', {
+	 	username:'SISTEMA',
+	 	msg:'Nombre no permitido, por favor recargue la pagina y ingrese otro nombre.'
+	 	});
+	 	socket.disconnect();
+		return -1;	
+	 }
 	 
-	 if (!users[name]){
-		 users[name]= {socket:socket};
+	 if (!users.online[name]){
+	 	if (!socket.username) {socket.username=name} //for devs
+		 users.assign(name,socket);
 		 console.log(socket.id+' como '+name);
 		 socket.emit('login finish',{username:name});
 		 chat.emit('users public connects',name);
@@ -61,7 +87,7 @@ var chat = io
 	 	username:'SISTEMA',
 	 	msg:'Nombre en uso. Por favor recargue la pagina y ingrese otro nombre'
 	 	});
-	 	socket.disconnect()
+	 	socket.disconnect();
 	}		 
 	 });
 
@@ -72,7 +98,7 @@ var chat = io
 	 +' Desconectado');
 	 console.log(userCount+' Usuarios conectados');
 	 if (socket.username) {
-	 	delete users[socket.username];
+	 	users.del(socket.username);
 	 }
   });
 

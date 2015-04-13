@@ -8,7 +8,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session=require('express-session');
 var passport=require('passport');
-var jwt = require('express-jwt');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
@@ -39,9 +38,6 @@ app.use('/bower_components',express.static(path.join(__dirname, 'bower_component
 app.use('/', routes);
 app.use('/users', users);
 //app.all('*', function(req, res) { res.redirect('/')});
-
-// Json Web Socket
-app.use(jwt({ secret: 'omg'}));
 
 
 // catch 404 and forward to error handler
