@@ -1,6 +1,12 @@
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
 
+function tokenGenerate(req,res){
+var token = jwt.sign({'username':req.user.username}, 'omg' ,{ expiresInMinutes: 60*5 });
+res.cookie('token',token ); //for testing 
+ }
+
+
 exports.account = function(req, res) {
   res.render('account', { user: req.user });
 };

@@ -10,7 +10,6 @@ router.get('/', pass.ensureAuthenticated, function(req, res, next) {
  });
 
 router.get('/login', function(req, res, next) {
-	//	console.log('Decodificacion: '+jwt.decode(token).user);
 		res.render('sign-in', {});
  });
 
@@ -18,9 +17,6 @@ router.get('/login', function(req, res, next) {
 router.post('/login', function(req,res,next){
 
 userController.postlogin(req,res,next);
-
-
-//res.json({token: 'oken'});
 
 });
 
