@@ -26,7 +26,7 @@ res.render('sign-up',{});
 });
 
 router.post('/sign-up', function(req,res,next){
-	
+userController.postSignUp(req,res,next);
 });
 
 

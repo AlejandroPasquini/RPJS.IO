@@ -44,3 +44,17 @@ exports.ensureAdmin = function ensureAdmin(req, res, next) {
   else
       res.send(403);
 }
+
+exports.signUp = function (req,res,next){
+var username = req.body.username;  
+var email= req.body.email;
+var password =req.body.password;
+
+var newUser= new User({username:username,email:email,password:password});
+newUser.save(function(err){
+if(err){ return handleError(err)} 
+});
+
+res.send(200);
+
+}

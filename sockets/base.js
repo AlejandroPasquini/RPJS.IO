@@ -5,21 +5,12 @@ var cookie= require('cookie');
 var chatController=require('./controllers/chat.js');
 var validate = require('./lib/validate.js');
 var userController=require('./controllers/user.js');
-function usersTemplateSystem(){
-/*jshint validthis: true */
-this.online={}
-this.assign = function (name,socket){
-this.online[name]={socket:socket}	
-}
-this.del = function (name){
-delete this.online[name];	
-}
-}
 
 module.exports = function (io) { 
 
-var users= new usersTemplateSystem();
+var users= new userController.usersServerTemplateSystem();
 var userCount=0;
+var socketCount=0;
 
 var chat = io
 .of('/chat')
@@ -37,8 +28,11 @@ var chat = io
 	 finally {	
 	 	if(decoded !==false){
 	 	console.log('Token Valido');
-	 	userController.tokenValidate(function(name){
-	 	console.log('El token es de '+name);
+	 	userController.tokenValidate(decoded.username,function(name){
+	 	users.assign(name,socket);
+	 	console.log('automatic login for token: '+name);
+	 	socket.emit('login finish',{username:name});
+
 	 	});	
 	 	}
 	 	else
@@ -52,14 +46,19 @@ var chat = io
 .on('connection', function(socket){
      // On conection
       var address = socket.handshake.address;
-      userCount=userCount+1;
-      socket.StreamB64file = {};
+      users.init(socket);
 	  console.log(address+': '+socket.id+' Contectado');
-	  console.log(userCount+' Usuarios conectados');
-	  socket.emit('connection successful',{usersOnLine:Object.keys(users.online)})
+	  socketCount=socketCount+1;
+	  console.log(socketCount+' WebSockets conectados');
+	  socket.on('request users list',function(){
+	  	
+	  	socket.emit('response users list',{usersOnLine:Object.keys(users.online)});
+	  });
 
 	 // On socket login
 	 socket.on('login',function(name){
+	 //		  console.log(chat.connected[socket.id]);
+
 	 try {
 	 	validate.name(name);
 	 }
@@ -74,12 +73,14 @@ var chat = io
 		return -1;	
 	 }
 	 
-	 if (!users.online[name]){
-	 	if (!socket.username) {socket.username=name} //for devs
+	 if (/*!users.online[name] && !socket.user.name*/true){
+	 	if (!socket.user.name) {socket.user.name=name} //for devs
 		 users.assign(name,socket);
+		 userCount=userCount+1;
+		 console.log(userCount+' Usuarios conectados');
 		 console.log(socket.id+' como '+name);
-		 socket.emit('login finish',{username:name});
-		 chat.emit('users public connects',name);
+		 socket.emit('login finish',{username:name,id:users.getUserID(name)});
+		 chat.emit('users public connects',users.getUserID(name));
 	 }
 
 	else {	
@@ -93,12 +94,12 @@ var chat = io
 
 
 	socket.on('disconnect', function(){
-	userCount=userCount-1;
-	 console.log(( socket.username || socket.id +' Usuario sin identificar.')
+	socketCount=socketCount-1;
+	 console.log(( socket.user.name || socket.id +' Usuario sin identificar.')
 	 +' Desconectado');
-	 console.log(userCount+' Usuarios conectados');
-	 if (socket.username) {
-	 	users.del(socket.username);
+	 console.log(socketCount+' WebSockets conectados');
+	 if (socket.user.name) {
+	 	users.del(socket);
 	 }
   });
 
@@ -120,7 +121,7 @@ var chat = io
 	});
 
 	socket.on('file upload',function(base64){
-	if (typeof socket.username !== 'undefined'){	
+	if (typeof socket.user.name !== 'undefined'){	
 
 	socket.StreamB64file.file = validate.upload(base64.file,socket.StreamB64file.validate);
 
@@ -135,21 +136,21 @@ var chat = io
 
   socket.on('chat message', function(msg){
   	var image;
-  	if( typeof socket.username !== 'undefined'){
+  	if( typeof socket.user.name !== 'undefined'){
   		
  		if (socket.StreamB64file.file !== false){
  			 image=socket.StreamB64file.file;
  			 delete socket.StreamB64file.file;
  			 delete socket.StreamB64file.validate;
  		}
-
   		chat.emit('chat message',{
   		msg:msg.body,
   		image: image,
-  		username:socket.username
+  		username:socket.user.name,
+  		id:socket.user.id
   		});
-        console.log(socket.username+' Envio un mensaje el '+new Date());
-        chatController.databaseSave(socket.username,msg.text);
+        console.log(socket.user.name+' Envio un mensaje el '+new Date());
+        chatController.databaseSave(socket.user.name,msg.text);
        // chatController.chatShow();
 
   }

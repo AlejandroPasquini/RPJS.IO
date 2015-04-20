@@ -2,7 +2,7 @@
 
 // chat controller for chat model require by sockets
 var chat= require('../models/chats')();
-exports.databaseSave = function (from,msg,to){
+exports.databaseSave = function (from,msg,to,socket){
 var incomingChat = new chat({ from: from,msg:msg });
 	if(to) incomingChat.to=to;
  	incomingChat.save();
@@ -22,7 +22,7 @@ exports.chatShow= function (){
 	chat.find({},{},{limit:10}, function (err, chats){
 	  if (err) return handleError(err);
 
-		console.log(chats);
+		console.log(chat);
 });
 
 }

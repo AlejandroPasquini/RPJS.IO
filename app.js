@@ -8,8 +8,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session=require('express-session');
 var passport=require('passport');
+
+//Routes 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var profile = require('./routes/profile');
+
 var app = express();
 
 // view engine setup
@@ -34,9 +38,10 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',express.static(path.join(__dirname, 'bower_components')));
 
-// Routes
+//init Routes
 app.use('/', routes);
 app.use('/users', users);
+app.use('/profile', profile);
 //app.all('*', function(req, res) { res.redirect('/')});
 
 

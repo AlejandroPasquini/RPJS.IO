@@ -34,7 +34,7 @@ function sendImageForUpload(input) {
     }
 }
 
-function assignUserColor(opt){
+function assignUserColor(usersInPublic,opt){
   if(typeof opt === 'undefined'){var opt={}}
   if (opt.mainUser){
     return {'backgroundColor':'','color':''}

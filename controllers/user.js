@@ -1,9 +1,10 @@
 var passport = require('passport');
+var pass = require('../config/passport')
 var jwt = require('jsonwebtoken');
 
 function tokenGenerate(req,res){
 var token = jwt.sign({'username':req.user.username}, 'omg' ,{ expiresInMinutes: 60*5 });
-res.cookie('token',token ); //for testing 
+res.cookie('token',token, {httpOnly:true} ); //for testing 
  }
 
 
@@ -49,7 +50,6 @@ exports.postlogin = function(req, res, next) {
       if (err) { return next(err); }
       // falta un desarrolo de serguridad
       tokenGenerate(req,res);
-
       return res.redirect('/users');
     });
   })(req, res, next);
@@ -59,3 +59,9 @@ exports.logout = function(req, res) {
   req.logout();
   res.redirect('/');
 };
+
+exports.postSignUp = function (req,res,next){
+
+pass.signUp(req,res,next);
+
+}

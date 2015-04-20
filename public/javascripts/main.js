@@ -1,15 +1,25 @@
 //Globals var
+
+var operations = [];
+
 function usersPublicTemplateSystem() {
   this.mainUserIsSet=1
   this.list={}
-  this.assignName= function(name,current){   
-    this.list[name]={};
+  this.assignUser= function(id,current){   
+    this.list[id]={};
     if (current===0){this.mainUserIsSet=0}
-    this.list[name].config={};
-    this.list[name].config.style={}; 
+    this.list[id].config={};
+    this.list[id].config.style={}; 
   }
 }
-$.getScript('javascripts/lib.js')
+
+function getScripts(callback) {
+    $.getScript('javascripts/lib.js', function(){
+      callback(null, 0);
+    });
+}
+   
+function main(callback){
 
 var usersInPublic = new usersPublicTemplateSystem()
 
@@ -90,7 +100,7 @@ $("#inputImage").change(function(){
       'margin-left': getMarginMsgHeader()+10
     });
     $('.msgTest:last').css({
-      'background-color': usersInPublic.list[msg['username']].config.style.backgroundColor
+      'background-color': usersInPublic.list[msg.id].config.style.backgroundColor
     });
  
     if (scollDown===true) {
@@ -99,12 +109,14 @@ $("#inputImage").change(function(){
 
   });
 
-socketChat.on('connection successful',function(obj){
+
+socketChat.emit('request users list');
+socketChat.on('response users list',function(obj){
 
 for (var i=0;obj.usersOnLine.length>i;i++){
 
-usersInPublic.assignName(obj.usersOnLine[i]);
-usersInPublic.list[obj.usersOnLine[i]].config.style=assignUserColor();
+usersInPublic.assignUser(obj.usersOnLine[i]);
+usersInPublic.list[obj.usersOnLine[i]].config.style=assignUserColor(usersInPublic);
 
 } 
 
@@ -112,16 +124,18 @@ usersInPublic.list[obj.usersOnLine[i]].config.style=assignUserColor();
 
 socketChat.on('login finish', function(obj){
 
-mainUser = obj.username
-usersInPublic.assignName(mainUser,0);
-usersInPublic.list[mainUser].config.style =assignUserColor({mainUser:mainUser});
+mainUser = obj.id
+usersInPublic.assignUser(mainUser,0);
+usersInPublic.list[mainUser].config.style =assignUserColor(usersInPublic,{mainUser:mainUser});
+$( "#username" ).text(obj.username);
+$('#login').hide(1500);
 
 });
 
 socketChat.on('users public connects',function(name){
     if (typeof usersInPublic.list[name]==='undefined'){
-    usersInPublic.assignName(name);
-    usersInPublic.list[name].config.style = assignUserColor(); 
+    usersInPublic.assignUser(name);
+    usersInPublic.list[name].config.style = assignUserColor(usersInPublic); 
   }
 });
 
@@ -144,4 +158,27 @@ alert(validate.err);
 
 });
 
-});   
+setInterval(function(){
+
+console.log(usersInPublic.list);
+
+},5000)
+
+callback(null,0);
+
+});
+}
+
+
+operations.push(getScripts);
+operations.push(main);
+
+
+async.series(operations, function (err, responses) {
+        
+console.log(responses);
+
+
+});
+
+
