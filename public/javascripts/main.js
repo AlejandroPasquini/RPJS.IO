@@ -2,14 +2,18 @@
 
 var operations = [];
 
-function usersPublicTemplateSystem() {
-  this.mainUserIsSet=1
-  this.list={}
-  this.assignUser= function(id,current){   
-    this.list[id]={};
-    if (current===0){this.mainUserIsSet=0}
-    this.list[id].config={};
-    this.list[id].config.style={}; 
+function usersPublicTemplateSystem2() {
+  this.mainUserIsSet=false
+  this.channel={}
+  this.channel.public={}
+  this.assignUser= function(id,current){
+    if(this.channel.public[id]){return -1};
+    var current= ((typeof current === 'undefined' || current===false) || this.mainUserIsSet!==false)? false: true;   
+    this.channel.public[id]={};
+    if (current===true){this.mainUserIsSet=true}
+    var arrayUser= Object.keys(this.channel.public);  
+    this.channel.public[id].config={};
+    this.channel.public[id].config.style=assignUserStyle(arrayUser,this.mainUserIsSet,current);
   }
 }
 
@@ -21,8 +25,7 @@ function getScripts(callback) {
    
 function main(callback){
 
-var usersInPublic = new usersPublicTemplateSystem()
-
+var usersInPublic2 = new usersPublicTemplateSystem2();
 var mainUser ='';
 $(document).ready(function() {
 
@@ -85,7 +88,7 @@ $("#inputImage").change(function(){
         }
 
      if( typeof msg['image'] !== 'undefined' ) {
-    $('#messages-box').append('<img class="img-responsive msg-image center-block" src="'+msg['image']+'">');
+    $('#messages-box').append('<img download="test" class="img-responsive msg-image center-block" src="'+msg['image']+'">');
   }
 
   // Formato de divs y clases para el mensaje
@@ -95,12 +98,12 @@ $("#inputImage").change(function(){
     $('.msg-header:last').append($('<img src="http://placehold.it/350x150" class="img-circle profile-img">'),
     $('<div class="msg-username">').text(msg['username'])
     );
-    $('.msgTest:last').append($('<div class="msg-text">').text(msg['msg']))
+    $('.msgTest:last').append($('<div class="msg-text">').text(msg['msg']));
     $('.msg-text:last').css({
       'margin-left': getMarginMsgHeader()+10
     });
     $('.msgTest:last').css({
-      'background-color': usersInPublic.list[msg.id].config.style.backgroundColor
+      'background-color': usersInPublic2.channel.public[msg.id].config.style.backgroundColor
     });
  
     if (scollDown===true) {
@@ -111,32 +114,27 @@ $("#inputImage").change(function(){
 
 
 socketChat.emit('request users list');
-socketChat.on('response users list',function(obj){
+socketChat.on('response users list',function(array){
 
-for (var i=0;obj.usersOnLine.length>i;i++){
+for (var i=0;array.usersOnLine.length>i;i++){
 
-usersInPublic.assignUser(obj.usersOnLine[i]);
-usersInPublic.list[obj.usersOnLine[i]].config.style=assignUserColor(usersInPublic);
+usersInPublic2.assignUser(array.usersOnLine[i]); 
 
 } 
 
 });
 
 socketChat.on('login finish', function(obj){
-
 mainUser = obj.id
-usersInPublic.assignUser(mainUser,0);
-usersInPublic.list[mainUser].config.style =assignUserColor(usersInPublic,{mainUser:mainUser});
 $( "#username" ).text(obj.username);
 $('#login').hide(1500);
-
+usersInPublic2.assignUser(mainUser,true)
+Cookies.set('rapidLogin', obj.username);
 });
 
-socketChat.on('users public connects',function(name){
-    if (typeof usersInPublic.list[name]==='undefined'){
-    usersInPublic.assignUser(name);
-    usersInPublic.list[name].config.style = assignUserColor(usersInPublic); 
-  }
+socketChat.on('users public connects',function(id){
+    usersInPublic2.assignUser(id); 
+  
 });
 
 socketChat.on('file validate',function(validate){
@@ -158,9 +156,12 @@ alert(validate.err);
 
 });
 
+
+
+
 setInterval(function(){
 
-console.log(usersInPublic.list);
+console.log(usersInPublic2.channel.public);
 
 },5000)
 

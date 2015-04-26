@@ -16,14 +16,24 @@ var chat = io
 .of('/chat')
 // Socket Auth
 .use(function (socket,next){
+	setTimeout(function(){
+		//For Test change this funciton
+	 users.init(socket);
 	 var auth = cookie.parse(socket.handshake.headers.cookie);
 	 var decoded = false
 	 try {
 	   decoded = jwt.verify(auth.token, 'omg');
 	 } catch(err) {
 	  console.log('Token invalido');
-	  //userCount=userCount-1;
-	  //socket.disconnect();
+	  console.log('probando con cockie de session');
+	  if (auth.rapidLogin){
+	  users.assign(auth.rapidLogin,socket);
+	  socket.emit('login finish',{username: socket.user.name, id:users.getUserID(socket.user.name)});
+	  console.log('AutoLogin con cookie: '+socket.user.name)
+	  }
+	  else {
+	  console.log('la cookie no existe, esperando login....')
+	  }
 	 }
 	 finally {	
 	 	if(decoded !==false){
@@ -31,8 +41,9 @@ var chat = io
 	 	userController.tokenValidate(decoded.username,function(name){
 	 	users.assign(name,socket);
 	 	console.log('automatic login for token: '+name);
-	 	socket.emit('login finish',{username:name});
-
+	 	socket.emit('login finish',{username: socket.user.name, id:users.getUserID(socket.user.name)});
+		userCount+=1
+		console.log('usuario conectados'+ userCount)
 	 	});	
 	 	}
 	 	else
@@ -41,20 +52,17 @@ var chat = io
 	 	}
 	 	next();
 	 }
-	
+	},5000)	
 })
 .on('connection', function(socket){
      // On conection
       var address = socket.handshake.address;
-      users.init(socket);
 	  console.log(address+': '+socket.id+' Contectado');
 	  socketCount=socketCount+1;
 	  console.log(socketCount+' WebSockets conectados');
 	  socket.on('request users list',function(){
-	  	
-	  	socket.emit('response users list',{usersOnLine:Object.keys(users.online)});
+	  socket.emit('response users list',{usersOnLine:Object.keys(users.online)});
 	  });
-
 	 // On socket login
 	 socket.on('login',function(name){
 	 //		  console.log(chat.connected[socket.id]);
@@ -105,12 +113,12 @@ var chat = io
 
 // socket data received validate
 	socket.on('file validate', function(file){
-		socket.StreamB64file.validate = {};
-		socket.StreamB64file.validate.type = file.type;
-		socket.StreamB64file.validate.dataBase64Key= file.dataBase64Key;
-		socket.StreamB64file.validate.length = file.length;
+		socket.user.StreamB64file.validate = {};
+		socket.user.StreamB64file.validate.type = file.type;
+		socket.user.StreamB64file.validate.dataBase64Key= file.dataBase64Key;
+		socket.user.StreamB64file.validate.length = file.length;
 		console.log(file);
-		validate.file(socket.StreamB64file.validate);
+		validate.file(socket.user.StreamB64file.validate);
 		if (validate.next){
 		socket.emit('file validate',{next:validate.next});
 		}
@@ -123,7 +131,7 @@ var chat = io
 	socket.on('file upload',function(base64){
 	if (typeof socket.user.name !== 'undefined'){	
 
-	socket.StreamB64file.file = validate.upload(base64.file,socket.StreamB64file.validate);
+	socket.user.StreamB64file.file = validate.upload(base64.file,socket.user.StreamB64file.validate);
 
 	socket.emit('file validate',{uploadComplete:'true'});
 	}
@@ -138,10 +146,10 @@ var chat = io
   	var image;
   	if( typeof socket.user.name !== 'undefined'){
   		
- 		if (socket.StreamB64file.file !== false){
- 			 image=socket.StreamB64file.file;
- 			 delete socket.StreamB64file.file;
- 			 delete socket.StreamB64file.validate;
+ 		if (socket.user.StreamB64file.file !== false){
+ 			 image=socket.user.StreamB64file.file;
+ 			 delete socket.user.StreamB64file.file;
+ 			 delete socket.user.StreamB64file.validate;
  		}
   		chat.emit('chat message',{
   		msg:msg.body,
@@ -150,7 +158,7 @@ var chat = io
   		id:socket.user.id
   		});
         console.log(socket.user.name+' Envio un mensaje el '+new Date());
-        chatController.databaseSave(socket.user.name,msg.text);
+        chatController.databaseSave({from:socket.user.name,msg:msg.body});
        // chatController.chatShow();
 
   }
@@ -171,7 +179,9 @@ var chat = io
   });
 
 });
-
+//for testing
+setInterval(function(){
+console.log(users.online)
+},15000)
 
 };
-
